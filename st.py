@@ -23,7 +23,7 @@ cols=['分钟二氧化碳产量', '分钟吸气潮气量', '动态顺应性', '�
 def main(): 
     html_temp = """
     <div style="background:#025246 ;padding:10px">
-    <h2 style="color:white;text-align:center;">AKI Prediction App </h2>
+    <h2 style="color:white;text-align:center;">Prediction of AKI with respiratory monitoring indicators</h2>
     </div>
     """
     st.markdown(html_temp, unsafe_allow_html = True)
