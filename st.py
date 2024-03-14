@@ -5,6 +5,7 @@ from sklearn import preprocessing
 import pickle
 from autogluon.tabular import TabularDataset, TabularPredictor
 import shap
+import plotly.figure_factory as ff
 from sklearn.model_selection import train_test_split
 
 # model = pickle.load(open('model.pkl', 'rb'))
@@ -49,6 +50,18 @@ def main():
     minute_ventilatory_ventilation = st.text_input("自主呼吸分钟通气量","5") 
     ventilated_co2 = st.text_input("通气二氧化碳产量","12") 
     saturation = st.text_input("饱和度监测","97") 
+    x1 = np.random.randn(200) - 2
+    x2 = np.random.randn(200)
+    x3 = np.random.randn(200) + 2
+       
+    hist_data = [x1, x2, x3]
+    group_labels = ["Group 1", "Group 2", "Group 3"]
+    fig = ff.create_distplot(
+        hist_data, group_labels, 
+        bin_size=[0.1, 0.25, 0.5])
+
+   st.markdown("# plotly绘图")
+   st.plotly_chart(fig)
 
     if st.button("Predict"): 
         features = [[minute_co2,minute_tidal_vol,dynamic_adaptation,o2_concentration,peak_airway_p,inspiration_time,tidal_vol,rwi,vent_work,rr,
