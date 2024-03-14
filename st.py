@@ -5,8 +5,6 @@ from sklearn import preprocessing
 import pickle
 from autogluon.tabular import TabularDataset, TabularPredictor
 import shap
-import plotly.figure_factory as ff
-from sklearn.model_selection import train_test_split
 
 # model = pickle.load(open('model.pkl', 'rb'))
 # predictor=TabularPredictor.load('./autogluon_model/4h_ventonly')
@@ -22,7 +20,7 @@ cols=['分钟二氧化碳产量', '分钟吸气潮气量', '动态顺应性', '�
        '自主呼吸分钟通气量', '通气二氧化碳产量', '饱和度监测' ]   
 
 def main(): 
-    st.title("AKI Predictor")
+    st.title("AKI predictor (4 hours advance warning of AKI occurrence using only 1 hour of ventilator monitoring data)")
     html_temp = """
     <div style="background:#025246 ;padding:10px">
     <h2 style="color:white;text-align:center;">AKI Prediction App </h2>
@@ -30,26 +28,26 @@ def main():
     """
     st.markdown(html_temp, unsafe_allow_html = True)
     st.set_option('deprecation.showPyplotGlobalUse', False)
-    minute_co2 = st.text_input("分钟二氧化碳产量","213") 
-    minute_tidal_vol = st.text_input("分钟吸气潮气量","9") 
-    dynamic_adaptation = st.text_input("动态顺应性","64") 
-    o2_concentration = st.text_input("吸入氧气浓度（监测）","45") 
-    peak_airway_p = st.text_input("吸气峰值气道压力","18") 
-    inspiration_time = st.text_input("吸气时间（秒）","1") 
-    tidal_vol = st.text_input("吸气潮气量","492") 
+    minute_co2 = st.text_input("分钟二氧化碳产量 (ml/min)","213") 
+    minute_tidal_vol = st.text_input("分钟吸气潮气量 (l/min)","9") 
+    dynamic_adaptation = st.text_input("动态顺应性 (ml/cmH2O)","64") 
+    o2_concentration = st.text_input("吸入氧气浓度 (%)","45") 
+    peak_airway_p = st.text_input("吸气峰值气道压力 (cmH2O)","18") 
+    inspiration_time = st.text_input("吸气时间 (second)","1") 
+    tidal_vol = st.text_input("吸气潮气量 (ml)","492") 
     rwi = st.text_input("呼吸弱度指数","47") 
-    vent_work = st.text_input("呼吸机做功","0.9") 
-    rr = st.text_input("呼吸频率（监测）","18") 
-    bmv = st.text_input("呼气分钟通气量","8") 
-    ppco2 = st.text_input("呼气末二氧化碳分压","36") 
+    vent_work = st.text_input("呼吸机做功 (J/l)","0.9") 
+    rr = st.text_input("呼吸频率","18") 
+    bmv = st.text_input("呼气分钟通气量 (l/min)","8") 
+    ppco2 = st.text_input("呼气末二氧化碳分压 (mmHg)","36") 
     ppco2_percent = st.text_input("呼气末二氧化碳浓度（%）","4") 
-    peep = st.text_input("呼气末正压","7") 
-    etd = st.text_input("呼气潮气量","488") 
-    average_airway_p = st.text_input("平均气道压力","10") 
-    pneumatic = st.text_input("气压","1000") 
-    minute_ventilatory_ventilation = st.text_input("自主呼吸分钟通气量","5") 
-    ventilated_co2 = st.text_input("通气二氧化碳产量","12") 
-    saturation = st.text_input("饱和度监测","97") 
+    peep = st.text_input("呼气末正压 (cmH2O)","7") 
+    etd = st.text_input("呼气潮气量 (ml)","488") 
+    average_airway_p = st.text_input("平均气道压力 (cmH2O)","10") 
+    pneumatic = st.text_input("气压 (mbar)","1000") 
+    minute_ventilatory_ventilation = st.text_input("自主呼吸分钟通气量 (l/min)","5") 
+    ventilated_co2 = st.text_input("通气二氧化碳产量 (ml)","12") 
+    saturation = st.text_input("饱和度监测 (%)","97") 
 
 
     if st.button("Predict"): 
@@ -64,16 +62,16 @@ def main():
        '吸气时间（秒）', '吸气潮气量', '呼吸弱度指数', '呼吸机做功', '呼吸频率（监测）', '呼气分钟通气量',
        '呼气末二氧化碳分压', '呼气末二氧化碳浓度（%）', '呼气末正压', '呼气潮气量', '平均气道压力', '气压',
        '自主呼吸分钟通气量', '通气二氧化碳产量', '饱和度监测'  ])
-    
+                 
         prediction = predictor.predict(df)
     
         output = int(prediction[0])
         if output == 1:
-            text = "AKI"
+            text = "will"
         else:
-            text = "NO AKI"
+            text = "will not"
 
-        st.success('Outcome is {}'.format(text))
+        st.success('AKI {} occur after 4 hours'.format(text))
     
         target_class = 1
         class AutogluonWrapper:
@@ -100,8 +98,8 @@ def main():
         explainer = shap.KernelExplainer(ag_wrapper.predict_proba, baseline)
         ROW_INDEX = 0  # index of an example datapoint
         # single_datapoint = X_train.iloc[[ROW_INDEX]]
-        # single_prediction = ag_wrapper.predict_proba(df)
-
+        single_prediction = ag_wrapper.predict_proba(df)
+        st.success('AKI riskscore is {}, (risk range is from 0 to 1, with 1 being the highest).'.format(single_prediction))
         shap_values_single = explainer.shap_values(df, nsamples=100)
         fig=shap.force_plot(explainer.expected_value, shap_values_single, df,matplotlib=True)
         st.pyplot(fig)
