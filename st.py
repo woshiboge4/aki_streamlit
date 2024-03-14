@@ -5,6 +5,7 @@ from sklearn import preprocessing
 import pickle
 from autogluon.tabular import TabularDataset, TabularPredictor
 import shap
+from sklearn.model_selection import train_test_split
 
 # model = pickle.load(open('model.pkl', 'rb'))
 # predictor=TabularPredictor.load('./autogluon_model/4h_ventonly')
