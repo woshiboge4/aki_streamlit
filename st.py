@@ -59,9 +59,8 @@ def main():
     fig = ff.create_distplot(
         hist_data, group_labels, 
         bin_size=[0.1, 0.25, 0.5])
-
-   st.markdown("# plotly绘图")
-   st.plotly_chart(fig)
+    st.markdown("# plotly绘图")
+    st.plotly_chart(fig)
 
     if st.button("Predict"): 
         features = [[minute_co2,minute_tidal_vol,dynamic_adaptation,o2_concentration,peak_airway_p,inspiration_time,tidal_vol,rwi,vent_work,rr,
