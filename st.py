@@ -21,22 +21,7 @@ X_train=train_data.drop(columns=['label'])
 cols=['分钟二氧化碳产量', '分钟吸气潮气量', '动态顺应性', '吸入氧气浓度（监测）', '吸气峰值气道压力',
        '吸气时间（秒）', '吸气潮气量', '呼吸弱度指数', '呼吸机做功', '呼吸频率（监测）', '呼气分钟通气量',
        '呼气末二氧化碳分压', '呼气末二氧化碳浓度（%）', '呼气末正压', '呼气潮气量', '平均气道压力', '气压',
-       '自主呼吸分钟通气量', '通气二氧化碳产量', '饱和度监测' ]    
-
-data2 = pd.DataFrame({
-'feature1':np.random.randn(100),
-'feature2':np.random.randn(100),
-'target': np.random.choice([0,1],100),
-})
-X=data2[['feature1','feature2']]
-y= data2['target']
-X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42)
-
-model = RandomForestClassifier(n_estimators=100, random_state=42)
-model.fit(X_train, y_train)
-explainer = ClassifierExplainer(model,X_test, y_test, cats=[],descriptions=None)
-db = ExplainerDashboard(explainer,title="江湖探秘")
-ExplainerDashboard(explainer).run()
+       '自主呼吸分钟通气量', '通气二氧化碳产量', '饱和度监测' ]   
 
 def main(): 
     st.title("AKI Predictor")
@@ -67,17 +52,7 @@ def main():
     minute_ventilatory_ventilation = st.text_input("自主呼吸分钟通气量","5") 
     ventilated_co2 = st.text_input("通气二氧化碳产量","12") 
     saturation = st.text_input("饱和度监测","97") 
-    x1 = np.random.randn(200) - 2
-    x2 = np.random.randn(200)
-    x3 = np.random.randn(200) + 2
-       
-    hist_data = [x1, x2, x3]
-    group_labels = ["Group 1", "Group 2", "Group 3"]
-    fig = ff.create_distplot(
-        hist_data, group_labels, 
-        bin_size=[0.1, 0.25, 0.5])
-    st.markdown("# plotly绘图")
-    st.plotly_chart(fig)
+
 
     if st.button("Predict"): 
         features = [[minute_co2,minute_tidal_vol,dynamic_adaptation,o2_concentration,peak_airway_p,inspiration_time,tidal_vol,rwi,vent_work,rr,
@@ -91,19 +66,7 @@ def main():
        '吸气时间（秒）', '吸气潮气量', '呼吸弱度指数', '呼吸机做功', '呼吸频率（监测）', '呼气分钟通气量',
        '呼气末二氧化碳分压', '呼气末二氧化碳浓度（%）', '呼气末正压', '呼气潮气量', '平均气道压力', '气压',
        '自主呼吸分钟通气量', '通气二氧化碳产量', '饱和度监测'  ])
-                
-        # category_col =['workclass', 'education', 'maritalstatus', 'occupation', 'relationship', 'race', 'gender', 'nativecountry']
-        # for cat in encoder_dict:
-        #     for col in df.columns:
-        #         le = preprocessing.LabelEncoder()
-        #         if cat == col:
-        #             le.classes_ = encoder_dict[cat]
-        #             for unique_item in df[col].unique():
-        #                 if unique_item not in le.classes_:
-        #                     df[col] = ['Unknown' if x == unique_item else x for x in df[col]]
-        #             df[col] = le.transform(df[col])
-            
-        # features_list = df.values.tolist()      
+    
         prediction = predictor.predict(df)
     
         output = int(prediction[0])
