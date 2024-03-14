@@ -21,13 +21,13 @@ cols=['分钟二氧化碳产量', '分钟吸气潮气量', '动态顺应性', '�
        '自主呼吸分钟通气量', '通气二氧化碳产量', '饱和度监测' ]   
 
 def main(): 
-    st.title("AKI predictor (4 hours advance warning of AKI occurrence using only 1 hour of ventilator monitoring data)")
     html_temp = """
     <div style="background:#025246 ;padding:10px">
     <h2 style="color:white;text-align:center;">AKI Prediction App </h2>
     </div>
     """
     st.markdown(html_temp, unsafe_allow_html = True)
+    st.title("(4 hours advance warning of AKI occurrence)")
     st.set_option('deprecation.showPyplotGlobalUse', False)
     minute_co2 = st.text_input("分钟二氧化碳产量 (ml/min)","213") 
     minute_tidal_vol = st.text_input("分钟吸气潮气量 (l/min)","9") 
@@ -99,8 +99,8 @@ def main():
         explainer = shap.KernelExplainer(ag_wrapper.predict_proba, baseline)
         ROW_INDEX = 0  # index of an example datapoint
         # single_datapoint = X_train.iloc[[ROW_INDEX]]
-        single_prediction = ag_wrapper.predict_proba(df)
-        st.success('AKI riskscore is {}, (risk range is from 0 to 1, with 1 being the highest).'.format(single_prediction))
+        single_prediction = round(ag_wrapper.predict_proba(df)[0],2)
+        st.success('AKI riskscore is {} (risk range is from 0 to 1, with 1 being the highest).'.format(single_prediction))
         shap_values_single = explainer.shap_values(df, nsamples=100)
         fig=shap.force_plot(explainer.expected_value, shap_values_single, df,matplotlib=True)
         st.pyplot(fig)
