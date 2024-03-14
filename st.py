@@ -7,6 +7,8 @@ from autogluon.tabular import TabularDataset, TabularPredictor
 import shap
 import plotly.figure_factory as ff
 from sklearn.model_selection import train_test_split
+from explainerdashboard import ClassifierExplainer, ExplainerDashboard
+from sklearn.ensemble import RandomForestClassifier
 
 # model = pickle.load(open('model.pkl', 'rb'))
 # predictor=TabularPredictor.load('./autogluon_model/4h_ventonly')
@@ -20,7 +22,22 @@ cols=['分钟二氧化碳产量', '分钟吸气潮气量', '动态顺应性', '�
        '吸气时间（秒）', '吸气潮气量', '呼吸弱度指数', '呼吸机做功', '呼吸频率（监测）', '呼气分钟通气量',
        '呼气末二氧化碳分压', '呼气末二氧化碳浓度（%）', '呼气末正压', '呼气潮气量', '平均气道压力', '气压',
        '自主呼吸分钟通气量', '通气二氧化碳产量', '饱和度监测' ]    
-  
+
+data2 = pd.DataFrame({
+'feature1':np.random.randn(100),
+'feature2':np.random.randn(100),
+'target': np.random.choice([0,1],100),
+})
+X=data2[['feature1','feature2']]
+y= data2['target']
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42)
+
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+explainer = ClassifierExplainer(model,X_test, y_test, cats=[],descriptions=None)
+db = ExplainerDashboard(explainer,title="江湖探秘")
+ExplainerDashboard(explainer).run()
+
 def main(): 
     st.title("AKI Predictor")
     html_temp = """
