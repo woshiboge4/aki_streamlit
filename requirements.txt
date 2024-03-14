@@ -278,3 +278,4 @@ xmod==1.8.1
 xxhash==3.4.1
 yarl==1.9.4
 zipp==3.17.0
+explainerdashboard==0.4.6
