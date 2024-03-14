@@ -174,7 +174,6 @@ plotly==5.19.0
 preshed==3.0.9
 prometheus_client==0.20.0
 prompt-toolkit
-protobuf==4.25.3
 psutil
 ptyprocess
 pure-eval
