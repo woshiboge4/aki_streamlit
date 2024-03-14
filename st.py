@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 
 # model = pickle.load(open('model.pkl', 'rb'))
 # predictor=TabularPredictor.load('./autogluon_model/4h_ventonly')
-predictor=TabularPredictor.load('./model/')
+predictor=TabularPredictor.load('./model/', require_py_version_match=False)
 # encoder_dict = pickle.load(open('encoder.pkl', 'rb'))
 # data=pd.read_pickle('./data/autogluon/4h/aki.pkl').iloc[:,:21]
 data=pd.read_pickle('./aki.pkl').iloc[:,:21]
